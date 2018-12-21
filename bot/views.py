@@ -9,33 +9,29 @@ from chatterbot import ChatBot
 from bs4 import BeautifulSoup
 import random
 import requests
-# previous model = 'Ron Obvious'
 
-#traditional = OpenCC('s2t')
-#simplified = OpenCC('t2s')
 
 chatbot = ChatBot(
     'Jack',
     tie_breaking_method="random_response",
     trainer='chatterbot.trainers.ChatterBotCorpusTrainer',
-    #storage_adapter='chatterbot.storage.SQLStorageAdapter',
-    read_only=True,
+    read_only=True, # ensure model will not be affected after training
     logic_adapters=[
         "chatterbot.logic.MathematicalEvaluation",
         "chatterbot.logic.BestMatch",
         {
             'import_path': 'chatterbot.logic.LowConfidenceAdapter',
-            'threshold': 0.30,
+            'threshold': 0.25,
             'default_response': '聽不懂你在說啥～我只是一個可愛的小Bot！'
         }
     ],
-    #trainer='chatterbot.trainers.UbuntuCorpusTrainer'
 )
 
-#chatbot.train()
-# Train based on the english corpus
-# chatbot.train("chatterbot.corpus.chinese")
-# chatbot.train("chatterbot.corpus.english.")
+# Train based on the chinese and english corpus
+#chatbot.train("chatterbot.corpus.chinese")
+#chatbot.train("chatterbot.corpus.english.greetings")
+#chatbot.train("chatterbot.corpus.english.conversations")
+#chatbot.train("chatterbot.corpus.english.emotion")
 
 line_bot_api = LineBotApi(settings.LINE_CHANNEL_ACCESS_TOKEN)
 parser = WebhookParser(settings.LINE_CHANNEL_SECRET)
@@ -54,7 +50,7 @@ def callback(request):
             return HttpResponseBadRequest()
 
         for event in events:
-            print(event)
+            print(event) # for debug
             if event.message.type == 'text':
                 handle_text_message(event, chatbot)
             elif event.message.type == 'sticker':
@@ -63,9 +59,6 @@ def callback(request):
         return HttpResponse()
     else:
         return HttpResponseBadRequest()
-
-#https://drive.google.com/open?id=1ukmT4NAxwqP3scF4MOry885CaAY8fg0r
-#https://drive.google.com/uc?export=view&id=1q1Tz3AeIPcQGqV3MHDSckkdeOsnxXuG-
 
 def handle_text_message(event, chatbot):
     if event.message.text == "顯示選單":
@@ -157,7 +150,11 @@ def handle_text_message(event, chatbot):
             TextSendMessage(text=chat_response)
         )
     elif event.message.text == '學業表現':
-        chat_response = '''家煒畢業於交通大學電子工程學系，累積排名: 3，Overall GPA: 4.14，Major GPA: 4.18，CS related GPA: 4.24，4次書卷獎，2017 林熊徵學田獎學金 (15萬)，2018 殷之同學長電子實驗獎學金 (3萬)。'''
+        chat_response = '家煒畢業於交通大學電子工程學系，累積排名: 3，Overall GPA: 4.14，Major GPA: 4.18，CS related GPA: 4.24，4次書卷獎，2017 林熊徵學田獎學金 (15萬)，2018 殷之同學長電子實驗獎學金 (3萬)。'
+        chat_response += '\n===================\n'
+        chat_response += '擅長的程式語言：Python, C, C++, Shell'
+        chat_response += '\n===================\n'
+        chat_response += '擅長的能力：Machine Learning, Data Mining, Deep Learning, Natural Language Processing'
         line_bot_api.reply_message(
             event.reply_token,
             TextSendMessage(text=chat_response)
