@@ -69,7 +69,7 @@ def handle_text_message(event, chatbot):
                 text='請選擇',
                 thumbnail_image_url='https://drive.google.com/uc?export=view&id=1ukmT4NAxwqP3scF4MOry885CaAY8fg0r',
                 actions=[
-                    MessageTemplateAction(label='學業表現', text='學業表現'),
+                    MessageTemplateAction(label='學業表現及簡介', text='學業表現及簡介'),
                     MessageTemplateAction(label='論文著述', text='論文著述'),
                     MessageTemplateAction(label='校外競賽', text='校外競賽'),
                     MessageTemplateAction(label='課外活動', text='課外活動')
@@ -149,8 +149,8 @@ def handle_text_message(event, chatbot):
             event.reply_token,
             TextSendMessage(text=chat_response)
         )
-    elif event.message.text == '學業表現':
-        chat_response = '家煒畢業於交通大學電子工程學系，累積排名: 3，Overall GPA: 4.14，Major GPA: 4.18，CS related GPA: 4.24，4次書卷獎，2017 林熊徵學田獎學金 (15萬)，2018 殷之同學長電子實驗獎學金 (3萬)。'
+    elif event.message.text == '學業表現及簡介':
+        chat_response = '家煒畢業於交通大學電子工程學系，累積排名: 3，Overall GPA: 4.14，Major GPA: 4.18，CS related GPA: 4.24，4次書卷獎，2017 林熊徵學田獎學金，2018 殷之同學長電子實驗獎學金。'
         chat_response += '\n===================\n'
         chat_response += '擅長的程式語言：Python, C, C++, Shell'
         chat_response += '\n===================\n'
