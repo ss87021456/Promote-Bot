@@ -19,13 +19,20 @@ chatbot = ChatBot(
     logic_adapters=[
         "chatterbot.logic.MathematicalEvaluation",
         "chatterbot.logic.BestMatch",
-        {
-            'import_path': 'chatterbot.logic.LowConfidenceAdapter',
-            'threshold': 0.25,
-            'default_response': '聽不懂你在說啥～我只是一個可愛的小Bot！'
-        }
+        #{
+        #    'import_path': 'chatterbot.logic.LowConfidenceAdapter',
+        #    'threshold': 0.25,
+        #    'default_response': '聽不懂你在說啥～我只是一個可愛的小Bot！'
+        #}
     ],
 )
+
+low_confidence_reply = ['聽不懂你在說啥～我只是一個可愛的小Bot！',
+                        '你說啥呢？我只知道我的主人是Jack Chen',
+                        '我小小的腦袋無法了解> <，非常抱歉！',
+                        '呀 還是聽不懂，不然我說個笑話好了：\n思思的帳號被冒用她的男友知道了以後很憤怒的說：可...可惡敢冒用思思',
+                        '呀 還是聽不懂，不然我說個笑話好了：\n朋友：借我三千急用！！\n我：這我必須跟我女朋友商量一下。\n朋友：你不是沒有女朋友？\n我：所以沒得商量。',
+                        '呀 還是聽不懂，不然我說個笑話好了：\n剛剛去買飲料路上遇到一群8+9\n其中一個對我說你知道我是誰嗎\n好可憐喔怎麼連自己是誰都忘了']
 
 # Train based on the chinese and english corpus
 #chatbot.train("chatterbot.corpus.chinese")
@@ -150,9 +157,9 @@ def handle_text_message(event, chatbot):
             TextSendMessage(text=chat_response)
         )
     elif event.message.text == '學業表現及簡介':
-        chat_response = '家煒畢業於交通大學電子工程學系，累積排名: 3，Overall GPA: 4.14，Major GPA: 4.18，CS related GPA: 4.24，4次書卷獎，2017 林熊徵學田獎學金，2018 殷之同學長電子實驗獎學金。'
+        chat_response = '家煒畢業於交通大學電子工程學系，累積排名: 3\nOverall GPA\t: 4.14\nMajor GPA\t\t: 4.18\nCS related GPA: 4.24\n4次書卷獎\n2017 林熊徵學田獎學金\n2018 殷之同學長電子實驗獎學金。'
         chat_response += '\n===================\n'
-        chat_response += '擅長的程式語言：Python, C, C++, Shell'
+        chat_response += '擅長的程式語言：\nPython, C, C++, Shell'
         chat_response += '\n===================\n'
         chat_response += '擅長的能力：Machine Learning, Data Mining, Deep Learning, Natural Language Processing'
         line_bot_api.reply_message(
@@ -307,6 +314,10 @@ def handle_text_message(event, chatbot):
         )
     else:
         response = chatbot.get_response(event.message.text)
+        confidence = response.confidence
+        if confidence < 0.25:
+            response.text = random.choice(low_confidence_reply)
+            response.confidence = 1
         chat_response = '[ChatterBot with {:2.2f}% confidence]: \n{}'.format(100*response.confidence, response.text)
         line_bot_api.reply_message(
             event.reply_token,
