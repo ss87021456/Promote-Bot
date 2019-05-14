@@ -1,4 +1,4 @@
-Django==1.9
+Django
 line-bot-sdk==1.8.0
 chatterbot==0.8.7
 gunicorn==19.3.0
